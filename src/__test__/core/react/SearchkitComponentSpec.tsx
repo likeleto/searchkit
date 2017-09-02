@@ -4,8 +4,7 @@ import {
   Accessor,
   ImmutableQuery
 } from "../../../"
-var block = require('bem-cn');
-
+let block = require("bem-cn")
 
 describe("SearchkitComponent", ()=> {
 
@@ -13,25 +12,6 @@ describe("SearchkitComponent", ()=> {
     this.component = new SearchkitComponent({})
     this.component.props = {}
     this.component.context = {}
-  })
-
-  it("SearchkitComponent.translatePropType", ()=> {
-    let translations = {
-      continueButton:"Continue",
-      cancelButton:"Cancel"
-    }
-
-    let handler = SearchkitComponent
-      .translationsPropType(translations)
-
-    expect(handler(
-      {translations:{
-        continueButton:"Continue..."
-      }},
-      "translations", "MyComponent"
-    )).toEqual(null)
-
-
   })
 
   it("translate()", ()=> {

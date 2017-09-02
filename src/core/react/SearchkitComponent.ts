@@ -1,12 +1,13 @@
 import * as React from "react"
-import {SearchkitManager} from "../SearchkitManager";
+import * as PropTypes from "prop-types"
+import {SearchkitManager} from "../SearchkitManager"
 import {ImmutableQuery} from "../query"
 import {Accessor} from "../accessors/Accessor"
 import {Utils} from "../support"
-var block = require('bem-cn');
-const keys = require("lodash/keys")
-const without = require("lodash/without")
-const transform = require("lodash/transform")
+let block = require("bem-cn")
+import {keys} from "lodash"
+import {without} from "lodash"
+import {mapValues} from "lodash"
 
 export interface SearchkitComponentProps {
   mod?:string
@@ -24,19 +25,19 @@ export class SearchkitComponent<P extends SearchkitComponentProps,S> extends Rea
   unmounted = false
 
   static contextTypes: React.ValidationMap<any> = {
-		searchkit:React.PropTypes.instanceOf(SearchkitManager)
+		searchkit:PropTypes.instanceOf(SearchkitManager)
 	}
 
   static translationsPropType = (translations)=> {
-    return React.PropTypes.objectOf(React.PropTypes.string)
+    return PropTypes.objectOf(PropTypes.string)
   }
 
   static propTypes:any = {
-    mod :React.PropTypes.string,
-    className :React.PropTypes.string,
-    translations: React.PropTypes.objectOf(
-      React.PropTypes.string),
-    searchkit:React.PropTypes.instanceOf(SearchkitManager)
+    mod :PropTypes.string,
+    className :PropTypes.string,
+    translations: PropTypes.objectOf(
+      PropTypes.string),
+    searchkit:PropTypes.instanceOf(SearchkitManager)
   }
 
   constructor(props?){
@@ -60,9 +61,9 @@ export class SearchkitComponent<P extends SearchkitComponentProps,S> extends Rea
     return Utils.translate(translation, interpolations)
   }
 
-  get bemBlocks(){
-    return transform(this.defineBEMBlocks(), (result:any, cssClass, name) => {
-      result[name] = block(cssClass);
+  get bemBlocks(): any {
+    return mapValues(this.defineBEMBlocks(), (cssClass) => {
+      return block(cssClass)
     })
   }
   _getSearchkit(){
@@ -78,7 +79,7 @@ export class SearchkitComponent<P extends SearchkitComponentProps,S> extends Rea
       this.stateListenerUnsubscribe = this.searchkit.emitter.addListener(()=> {
         if(!this.unmounted){
           this.forceUpdate();
-        } 
+        }
       })
     } else {
       console.warn("No searchkit found in props or context for " + this.constructor["name"])

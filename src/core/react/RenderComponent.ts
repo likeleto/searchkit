@@ -1,44 +1,41 @@
 import * as React from 'react'
+import * as PropTypes from "prop-types"
 
 import {PureRender} from "./pure-render"
-const omitBy = require('lodash/omitBy')
-const isUndefined = require('lodash/isUndefined')
-const defaults = require('lodash/defaults')
+import {omitBy} from 'lodash'
+import {isUndefined} from 'lodash'
+import {defaults} from 'lodash'
 
 export type RenderFunction = (props?:any, children?:any) => Element
 export type Element = React.ReactElement<any>
 export type RenderComponentType<P> = React.ComponentClass<P> | React.ClassicComponentClass<P> | Element | RenderFunction;
 
-export const RenderComponentPropType = React.PropTypes.oneOfType([
+export const RenderComponentPropType = PropTypes.oneOfType([
   function(props:any, propName: string, componentName: string) {
-    return isUndefined(props[propName]) || (props[propName]["prototype"] instanceof React.Component)
+     if(isUndefined(props[propName]) || (props[propName]["prototype"] instanceof React.Component)) {
+       return null
+     }
   },
-  React.PropTypes.element,
-  React.PropTypes.func,
+  PropTypes.element,
+  PropTypes.func,
 ])
 
-
-@PureRender
-class FunctionComponent extends React.Component<any, any> {
-  render(){
-    const {fun, props} = this.props
-    return fun(props)
-  }
-}
-
 export function renderComponent(component:RenderComponentType<any>, props={}, children=null){
-  if (component["prototype"] instanceof React.Component || (component["prototype"] && component["prototype"].isReactComponent)){
-    return React.createElement(component as React.ComponentClass<any>, props, children)
+  let isReactComponent = (
+    component["prototype"] instanceof React.Component ||
+    (component["prototype"] && component["prototype"].isReactComponent) ||
+    typeof component === 'function'
+  )
+  if (isReactComponent){
+    return React.createElement(
+      component as React.ComponentClass<any>,
+      props, children
+    )
   } else if (React.isValidElement(component)){
-    return React.cloneElement(component as Element, omitBy(props, isUndefined), children);
-  } else if ((typeof component) === 'function'){
-    const funProps = (children != null) ? defaults(props, {children}) : props
-    return React.createElement(FunctionComponent, {
-      key: props["key"],
-      fun: component,
-      props: funProps
-    })
-
+    return React.cloneElement(
+      component as Element,
+      omitBy(props, isUndefined), children
+    );
   }
   console.warn("Invalid component", component)
   return null

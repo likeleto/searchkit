@@ -1,14 +1,87 @@
-## 0.10.0-1 (18th May, 2016)
+# 2.2.0 (20th August, 2017)
+- Passing credentials in the request (#481)
+
+# 2.1.0 (6th June, 2017)
+- Updated rc-slider library to 8.1.2
+
+# 2.1.0 (6th June, 2017)
+- FastClick switched off by default (#464)
+- Elasticsearch 5.x + Hierarchical refinement filter issue fix (#465)
+
+# 2.0.1 - Public Release (22th May, 2017)
+- MenuFilter bucketsTransform fix (#459)
+
+# 2.0.0 - Public Release (22th May, 2017)
+- Public release of 2.0.0
+
+# 2.0.0 - Beta 11 (20th May, 2017)
+- replace React.PropTypes with prop-types package (#453)
+
+# 2.0.0 - Beta 10 (18th May, 2017)
+-	Issue 443: Replace React.PropTypes with prop-types package (#450)
+
+# 2.0.0 - Beta 9 (29th March, 2017)
+- fixing history types to correct version
+
+# 2.0.0 - Beta 8 (29th March, 2017)
+- fix: Elasticsearch 5.1 parsing exception #413
+- Fix inline parameters declaration syntax. #412
+- Move jasmine types to devDependencies. (#411)
+- qs upgrade to latest released version (#409)
+- History updates (#430)
+- Add withCredentials support (#403)
+
+## 1.0.0 - Beta 7 (23th Feb, 2017)
+- fix: Set default size to 20 for `HierarchicalMenuFilter` #398
+- Abort axios requests which will not be used. E.g. search as you type
+
+## 1.0.0 - Beta 6 (19th Feb, 2017)
+- new feature: Ability for custom highlighting options #355
+
+## 1.0.0 - Beta 5 (17th Feb, 2017)
+- new feature: Axios upgrade, expose timeout #396
+- updated dev guide
+
+## 1.0.0 - Beta 4 (14th Feb, 2017)
+- fix: Elasticsearch 5 compat fix
+
+## 1.0.0 - Beta 3 (14th Feb, 2017)
+- fix: Typo in error message
+- fix: fix typo on indexing documentation
+- fix: small fix on checkbox filters when filter option name is too long #335
+
+## 1.0.0 - Beta 2 (13th Feb, 2017)
+- fix: Circle CI build
+
+## 1.0.0 - Beta 1 (13th Feb, 2017)
+- fix: `ViewSwitcherHits` mutating props. React 15 gives warning.
+- fix: `Pagination` works. Lodash regression issue
+
+## 1.0.0 - Beta 0 (4rd Feb, 2017)
+### Dependencies Updates
+- Added React 15 to peer dependencies + fix tests for react 15.4
+- history to 2.1.1
+- typescript to 2.1.4
+- type definitions managed by npm
+- lodash to 4.14
+- rc-slider to 5.4.3
+- protractor to 4.0.0
+
+## 0.10.1 (10th August, 2016)
+- fix pagination regression due to lodash change of api
+
+## 0.10.0 (4th June, 2016)
 - `SearchkitManager` is more intelligent with reregistering url listeners
-
-## 0.10.0-0 (13th May, 2016)
-
-### Notable changes
-- `RefinementListFilter` now supports `fieldOptions` for `nested`/`child` fields
+- `RefinementListFilter`, `MenuFilter`, `NumericRefinementListFilter` and `RangeFilter` now supports `fieldOptions` for `nested`/`child` fields
+- `RefinementListFilter`, `MenuFilter` inject missing selected filters
+- `RefinementListFilter`, `MenuFilter` have new `bucketsTransform` prop function to manipulate the elastic search buckets returned.
+- Bug fix to itemComponent, listComponent, \*Component which allows context in stateless components
 - MenuFilter fix to support booleans
 - HierarchicalRefinementFilter disabled state fix
 - update history dependency to `2.1.1` which should be compatible with react-router 2.x
 - fix `DynamicRangeFilter` rounding issues
+- Added `countFormatter` count formatting support to `RefinementListFilter`, `MenuFilter`, `NumericRefinementListFilter`, `HierarchicalMenuFilter`, `HierarchicalRefinementFilter`, `HitsStats`
+- Added `rangeFormatter` range display support to `RangeFilter`, `DynamicRangeFilter`
 - Fix corner cases to BoolMustNot queries
 - `SearchkitManager` `searchOnLoad` now works without history
 - `SearchkitManager.addResultsListener` to register a callback when ever new results are recieved

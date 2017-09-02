@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as PropTypes from "prop-types";
 
 import {
   QueryAccessor,
@@ -14,10 +15,7 @@ import {
   Panel
 } from "../../../ui"
 
-const defaults = require('lodash/defaults')
-const throttle = require("lodash/throttle")
-const assign = require("lodash/assign")
-const isUndefined = require("lodash/isUndefined")
+import {defaults, throttle, assign, isUndefined} from 'lodash'
 
 export interface InputFilterProps extends SearchkitComponentProps {
   id: string
@@ -54,21 +52,21 @@ export class InputFilter extends SearchkitComponent<InputFilterProps, any> {
   }
 
   static propTypes = defaults({
-    id:React.PropTypes.string.isRequired,
-    title: React.PropTypes.string.isRequired,
-    searchOnChange:React.PropTypes.bool,
-    searchThrottleTime:React.PropTypes.number,
-    queryBuilder:React.PropTypes.func,
-    queryFields:React.PropTypes.arrayOf(React.PropTypes.string),
-    queryOptions:React.PropTypes.object,
-    prefixQueryFields:React.PropTypes.arrayOf(React.PropTypes.string),
-    prefixQueryOptions:React.PropTypes.object,
+    id:PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    searchOnChange:PropTypes.bool,
+    searchThrottleTime:PropTypes.number,
+    queryBuilder:PropTypes.func,
+    queryFields:PropTypes.arrayOf(PropTypes.string),
+    queryOptions:PropTypes.object,
+    prefixQueryFields:PropTypes.arrayOf(PropTypes.string),
+    prefixQueryOptions:PropTypes.object,
     translations:SearchkitComponent.translationsPropType(
       SearchBox.translations
     ),
-    mod: React.PropTypes.string,
-    placeholder: React.PropTypes.string,
-    blurAction: React.PropTypes.string
+    mod: PropTypes.string,
+    placeholder: PropTypes.string,
+    blurAction: PropTypes.string
   }, SearchkitComponent.propTypes)
 
   constructor (props:InputFilterProps) {
@@ -176,7 +174,7 @@ export class InputFilter extends SearchkitComponent<InputFilterProps, any> {
   render() {
     const { containerComponent, title, id } = this.props
     const block = this.bemBlocks.container
-    const value = this.getValue()    
+    const value = this.getValue()
     return renderComponent(containerComponent, {
       title,
       className: id ? `filter--${id}` : undefined,

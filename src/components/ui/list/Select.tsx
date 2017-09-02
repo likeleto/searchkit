@@ -4,12 +4,12 @@ import { ItemComponent, CheckboxItemComponent } from "./ItemComponents"
 import { ListProps } from "./ListProps"
 
 import {PureRender} from "../../../core"
-const block = require('bem-cn')
-const map = require("lodash/map")
-const filter = require("lodash/filter")
-const transform = require("lodash/transform")
-const find = require("lodash/find")
-const identity = require("lodash/identity")
+let block = require("bem-cn")
+import {map} from "lodash"
+import {filter} from "lodash"
+import {transform} from "lodash"
+import {find} from "lodash"
+import {identity} from "lodash"
 
 @PureRender
 export class Select extends React.Component<ListProps, any> {
@@ -17,7 +17,8 @@ export class Select extends React.Component<ListProps, any> {
   static defaultProps: any = {
     mod: "sk-select",
     showCount: true,
-    translate:identity
+    translate:identity,
+    countFormatter:identity
   }
 
   constructor(props){
@@ -38,7 +39,8 @@ export class Select extends React.Component<ListProps, any> {
   }
 
   render() {
-    const { mod, className, items, disabled, showCount, translate } = this.props
+    const { mod, className, items,
+      disabled, showCount, translate, countFormatter } = this.props
 
     const bemBlocks = {
       container: block(mod)
@@ -46,10 +48,10 @@ export class Select extends React.Component<ListProps, any> {
 
     return (
       <div className={bemBlocks.container().mix(className).state({ disabled }) }>
-        <select onChange={this.onChange} value={this.getSelectedValue() }>
+        <select onChange={this.onChange} value={this.getSelectedValue()}>
           {map(items, ({key, label, title, disabled, doc_count}, idx) => {
             var text = translate(label || title || key)
-            if (showCount && doc_count !== undefined) text += ` (${doc_count})`
+            if (showCount && doc_count !== undefined) text += ` (${countFormatter(doc_count)})`
             return <option key={key} value={key} disabled={disabled}>{text}</option>
           })}
           </select>

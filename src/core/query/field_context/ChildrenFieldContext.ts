@@ -1,6 +1,6 @@
 import {FieldContext} from './FieldContext';
 import {ChildrenBucket, HasChildQuery} from "../query_dsl"
-const get = require("lodash/get")
+import {get} from "lodash"
 
 export class ChildrenFieldContext extends FieldContext {
 
@@ -23,6 +23,10 @@ export class ChildrenFieldContext extends FieldContext {
     )]
   }
   wrapFilter(filter){
-    return HasChildQuery(this.fieldOptions.options.childType, filter)
+    return HasChildQuery(
+      this.fieldOptions.options.childType,
+      filter,
+      this.fieldOptions.options
+    )
   }
 }

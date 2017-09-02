@@ -1,6 +1,6 @@
 import * as React from "react";
 import {mount} from "enzyme";
-const bemBlock = require('bem-cn')
+let bemBlock = require("bem-cn")
 
 import { TagCloud } from "./TagCloud"
 import { MockList } from "./MockList"
@@ -13,19 +13,19 @@ describe("TagCloud", ()=> {
   it("should render and behave correctly", ()=> {
     this.wrapper = mount(
       <MockList listComponent={TagCloud}/>
-    )    
+    )
     expect(this.wrapper.html()).toEqual(jsxToHTML(
       <div className="sk-tag-cloud">
-        <div className="sk-tag-cloud-option sk-tag-cloud__item is-active" style={{fontSize:"1em"}} data-qa="option" data-key="a">
+        <div className="sk-tag-cloud-option sk-tag-cloud__item is-active" data-qa="option" data-key="a" style={{fontSize:" 1em"}}>
           <div data-qa="label" className="sk-tag-cloud-option__text">A translated</div>
         </div>
-        <div className="sk-tag-cloud-option sk-tag-cloud__item is-disabled" style={{fontSize:"1.1em"}} data-qa="option" data-key="b">
+        <div className="sk-tag-cloud-option sk-tag-cloud__item is-disabled" data-qa="option" data-key="b" style={{fontSize:" 1.1em"}}>
           <div data-qa="label" className="sk-tag-cloud-option__text">B translated</div>
         </div>
-        <div className="sk-tag-cloud-option sk-tag-cloud__item is-active" style={{fontSize:"1.2em"}} data-qa="option" data-key="c">
+        <div className="sk-tag-cloud-option sk-tag-cloud__item is-active" data-qa="option" data-key="c" style={{fontSize:" 1.2em"}}>
           <div data-qa="label" className="sk-tag-cloud-option__text">C translated</div>
         </div>
-        <div className="sk-tag-cloud-option sk-tag-cloud__item" style={{fontSize:"1.5em"}} data-qa="option" data-key="d">
+        <div className="sk-tag-cloud-option sk-tag-cloud__item" data-qa="option" data-key="d" style={{fontSize:" 1.5em"}}>
           <div data-qa="label" className="sk-tag-cloud-option__text">d translated</div>
         </div>
       </div>
@@ -52,16 +52,16 @@ describe("TagCloud", ()=> {
     )
     expect(this.wrapper.html()).toEqual(jsxToHTML(
       <div className="sk-tag-cloud">
-        <div className="sk-tag-cloud-option sk-tag-cloud__item is-active" style={{fontSize:"1em"}} data-qa="option" data-key="a">
+        <div className="sk-tag-cloud-option sk-tag-cloud__item is-active" data-qa="option" data-key="a" style={{fontSize:" 1em"}}>
           <div data-qa="label" className="sk-tag-cloud-option__text">a translated</div>
         </div>
-        <div className="sk-tag-cloud-option sk-tag-cloud__item" style={{fontSize:"1.1em"}} data-qa="option" data-key="b">
+        <div className="sk-tag-cloud-option sk-tag-cloud__item" data-qa="option" data-key="b" style={{fontSize:" 1.1em"}}>
           <div data-qa="label" className="sk-tag-cloud-option__text">B translated</div>
         </div>
-        <div className="sk-tag-cloud-option sk-tag-cloud__item is-active" style={{fontSize:"1.2em"}} data-qa="option" data-key="c">
+        <div className="sk-tag-cloud-option sk-tag-cloud__item is-active" data-qa="option" data-key="c" style={{fontSize:" 1.2em"}}>
           <div data-qa="label" className="sk-tag-cloud-option__text">C translated</div>
         </div>
-        <div className="sk-tag-cloud-option sk-tag-cloud__item" style={{fontSize:"1.5em"}} data-qa="option" data-key="d">
+        <div className="sk-tag-cloud-option sk-tag-cloud__item" data-qa="option" data-key="d" style={{fontSize:" 1.5em"}}>
           <div data-qa="label" className="sk-tag-cloud-option__text">d translated</div>
         </div>
       </div>
@@ -82,7 +82,7 @@ describe("TagCloud", ()=> {
     )
 
     expect(this.wrapper.find(".sk-tag-cloud__item").at(0).text())
-      .toBe("A translated10") // Count is appended in a span and styled with CSS
+      .toBe("A translated#10") // Count is appended in a span and styled with CSS
   })
 
 })

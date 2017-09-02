@@ -10,14 +10,14 @@ import {
 import { ItemComponent } from './ItemComponents'
 import { ListProps, ItemProps } from './ListProps'
 
-const block = require('bem-cn')
+let block = require("bem-cn")
 
-const map = require("lodash/map")
-const includes = require("lodash/includes")
-const sortBy = require("lodash/sortBy")
-const minBy = require("lodash/minBy")
-const maxBy = require("lodash/maxBy")
-const identity = require("lodash/identity")
+import {map} from "lodash"
+import {includes} from "lodash"
+import {sortBy} from "lodash"
+import {minBy} from "lodash"
+import {maxBy} from "lodash"
+import {identity} from "lodash"
 
 function computeMinMax(items, field) {
   if (!items || items.length == 0) return { min: 0, max: 0 }
@@ -42,7 +42,8 @@ export class TagCloud extends React.Component<TagCloudProps, any> {
     showCount: false,
     minFontSize: 1, // In em
     maxFontSize: 1.5,
-    translate: identity
+    translate: identity,
+    countFormatter:identity
   }
 
   render() {
@@ -64,7 +65,9 @@ export class TagCloud extends React.Component<TagCloudProps, any> {
   }
 
   renderItem(item, bemBlocks, min, max) {
-    const { itemComponent, minFontSize, maxFontSize, showCount, selectedItems = [], toggleItem, disabled, translate } = this.props
+    const {
+      itemComponent, minFontSize, maxFontSize,showCount, countFormatter,
+      selectedItems = [], toggleItem, disabled, translate } = this.props
 
     const sizeRatio = (min === max) ? 0.5 : ((item.doc_count - min) / (max - min))
     const fontSize = minFontSize + sizeRatio * (maxFontSize - minFontSize) // TODO : make ratio function customizable (square, log, etc.)
@@ -78,7 +81,7 @@ export class TagCloud extends React.Component<TagCloudProps, any> {
       active: includes(selectedItems, item.key),
       style: { fontSize: fontSize + 'em' },
       showCount,
-      count: item.doc_count
+      count: countFormatter(item.doc_count)
     })
   }
 }

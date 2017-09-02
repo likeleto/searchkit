@@ -9,10 +9,10 @@ import {
   renderComponent
 } from "../../../core"
 
-import { 
-  AutoShowMore, 
-  ShowMoreButton, 
-  ShowMoreProps 
+import {
+  AutoShowMore,
+  ShowMoreButton,
+  ShowMoreProps
 } from "../../ui/show-more"
 
 const defaults = require("lodash/defaults")
@@ -54,14 +54,14 @@ export class InfiniteScrollingPagination extends SearchkitComponent<InfiniteScro
       get(this.getQuery(), "query.size", 10)
     );
   }
-  
+
   hasMore(){
     return this.hasHits() && this.getTotalPages() > this.getCurrentPage()
   }
-  
+
   showMoreIfNeeded() {
     if (this.searchkit.loading || !this.hasMore()) return;
-    
+
     this.accessor.state = this.accessor.state.setValue(this.getCurrentPage() + 1);
     this.searchkit.performSearch();
   }

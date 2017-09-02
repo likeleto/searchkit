@@ -1,10 +1,10 @@
 import {
   SearchkitManager, AccessorManager, ESTransport, AxiosESTransport,
-  ImmutableQuery, createHistory, PageSizeAccessor, SearchRequest,
+  ImmutableQuery, createHistoryInstance, PageSizeAccessor, SearchRequest,
   EventEmitter, QueryAccessor, AnonymousAccessor, MockESTransport
 } from "../../"
 
-const _ = require("lodash")
+import * as _ from "lodash"
 
 describe("SearchkitManager", ()=> {
 
@@ -47,8 +47,13 @@ describe("SearchkitManager", ()=> {
       .toEqual(jasmine.any(AxiosESTransport))
     expect(this.searchkit.transport.options.headers).toEqual(
       jasmine.objectContaining({
-        "Content-Type":"application/json",
-        "Authorization":jasmine.any(String)
+        "Content-Type":"application/json"
+      })
+    )
+    expect(this.searchkit.transport.axios.defaults.auth).toEqual(
+      jasmine.objectContaining({
+        "username":"key",
+        "password":"val"
       })
     )
     expect(this.searchkit.query).toEqual(new ImmutableQuery())
@@ -57,8 +62,22 @@ describe("SearchkitManager", ()=> {
     )
     expect(this.searchkit.options.searchOnLoad).toBe(false)
     expect(this.searchkit.initialLoading).toBe(true)
+    expect(this.searchkit.options.withCredentials).toBeFalsy()
     //check queryProcessor is an identity function
     expect(this.searchkit.queryProcessor("query")).toBe("query")
+  })
+
+  it('constructor - withCredentials', () => {
+    this.searchkit = new SearchkitManager(this.host, {
+      useHistory:false,
+      httpHeaders:{
+        "Content-Type":"application/json"
+      },
+      withCredentials: true,
+      searchUrlPath:"/search",
+      searchOnLoad:false
+    })
+    expect(this.searchkit.options.withCredentials).toEqual(true)
   })
 
   it("SearchkitManager.mock()", ()=> {
@@ -117,10 +136,8 @@ describe("SearchkitManager", ()=> {
   })
 
   it("listenToHistory()", (done)=> {
-    const history = createHistory()
-    history.push({pathname: window.location.pathname, query:{
-      q:"foo"
-    }})
+    const history = createHistoryInstance()
+    history.push(window.location.pathname + "?q=foo")
     SearchkitManager.prototype.unlistenHistory = jasmine.createSpy("unlisten")
     const searchkit = new SearchkitManager("/", {
       useHistory:true
@@ -141,35 +158,33 @@ describe("SearchkitManager", ()=> {
   })
 
   it("listenToHistory() - searchOnLoad false", (done)=> {
-    const history = createHistory()
-    history.push({pathname: window.location.pathname, query: {
-      q:"foo-previous"
-    }})
-
-    const searchkit = new SearchkitManager("/", {
-      useHistory:true,
-      searchOnLoad:false
-    })
-    searchkit.setupListeners()
-    spyOn(searchkit.accessors, "setState")
-    spyOn(searchkit, "_search")
-    searchkit.completeRegistration()
+    const history = createHistoryInstance()
+    history.push(window.location.pathname + "?q=foo-previous")
+    history.push(window.location.pathname + "?q=foo-now")
     setTimeout(()=> {
-      expect(searchkit._search).not.toHaveBeenCalled()
-      history.goBack()
+      const searchkit = new SearchkitManager("/", {
+        useHistory:true,
+        searchOnLoad:false
+      })
+      searchkit.setupListeners()
+      spyOn(searchkit.accessors, "setState")
+      spyOn(searchkit, "searchFromUrlQuery")
+      searchkit.completeRegistration()
       setTimeout(()=> {
-        expect(searchkit._search).toHaveBeenCalled()
-        searchkit.unlistenHistory()
-        done()
+        history.goBack()
+        setTimeout(()=> {
+          expect(searchkit.searchFromUrlQuery).toHaveBeenCalledWith({q:"foo-previous"})
+          searchkit.unlistenHistory()
+          done()
+        },0)
       },0)
-    },0)
+    }, 0)
+
   })
 
   it("listenToHistory() - handle error", (done)=> {
-    const history = createHistory()
-    history.push({pathname: window.location.pathname, query: {
-      q:"foo"
-    }})
+    const history = createHistoryInstance()
+    history.push(window.location.pathname + "?q=foo")
     const searchkit = new SearchkitManager("/", {
       useHistory:true
     })
@@ -201,7 +216,7 @@ describe("SearchkitManager", ()=> {
     spyOn(searchkit.history, "push")
     searchkit.performSearch()
     expect(searchkit.history.push).toHaveBeenCalledWith(
-      {pathname:"/context.html", query: {q:"foo"}}
+      "/context.html?q=foo"
     )
     expect(searchkit.accessors.notifyStateChange)
       .toHaveBeenCalledWith(searchkit.state)

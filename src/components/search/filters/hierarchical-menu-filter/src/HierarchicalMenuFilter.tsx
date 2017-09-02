@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as PropTypes from "prop-types";
 
 import {
 	SearchkitComponent,
@@ -7,8 +8,9 @@ import {
 	SearchkitComponentProps
 } from "../../../../../core"
 
-const defaults = require("lodash/defaults")
-const map = require("lodash/map")
+import {defaults} from "lodash"
+import {map} from "lodash"
+import {identity} from "lodash"
 
 export interface HierarchicalMenuFilterProps extends SearchkitComponentProps{
 	id:string
@@ -16,23 +18,25 @@ export interface HierarchicalMenuFilterProps extends SearchkitComponentProps{
 	title:string
 	size?:number
 	orderKey?:string
-	orderDirection?:string
+	orderDirection?:string,
+	countFormatter?:(count:number)=> string | number
 }
 
 export class HierarchicalMenuFilter extends SearchkitComponent<HierarchicalMenuFilterProps, any> {
 	public accessor:HierarchicalFacetAccessor
 
-	static propTypes = defaults({
-		id:React.PropTypes.string.isRequired,
-		fields:React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
-		title:React.PropTypes.string.isRequired,
-		orderKey:React.PropTypes.string,
-		orderDirection:React.PropTypes.oneOf(["asc", "desc"])
-	}, SearchkitComponent.propTypes)
-
-	constructor(props:HierarchicalMenuFilterProps) {
-		super(props)
+	static defaultProps = {
+		countFormatter:identity,
+		size: 20
 	}
+	static propTypes = defaults({
+		id:PropTypes.string.isRequired,
+		fields:PropTypes.arrayOf(PropTypes.string).isRequired,
+		title:PropTypes.string.isRequired,
+		orderKey:PropTypes.string,
+		orderDirection:PropTypes.oneOf(["asc", "desc"]),
+		countFormatter:PropTypes.func
+	}, SearchkitComponent.propTypes)
 
 	defineBEMBlocks() {
 		var blockClass = this.props.mod || "sk-hierarchical-menu";
@@ -43,7 +47,7 @@ export class HierarchicalMenuFilter extends SearchkitComponent<HierarchicalMenuF
 	}
 
 	defineAccessor() {
-		const {id, title, fields, size=0, orderKey, orderDirection} = this.props
+		const {id, title, fields, size, orderKey, orderDirection} = this.props
 		return new HierarchicalFacetAccessor(id, {
 			id, title, fields, size, orderKey, orderDirection
 		})
@@ -59,7 +63,7 @@ export class HierarchicalMenuFilter extends SearchkitComponent<HierarchicalMenuF
 	renderOption(level, option) {
 
 		var block = this.bemBlocks.option
-
+		const {countFormatter} = this.props
 		var className = block().state({
 			selected:this.accessor.state.contains(level, option.key)
 		})
@@ -69,7 +73,7 @@ export class HierarchicalMenuFilter extends SearchkitComponent<HierarchicalMenuF
 				<FastClick handler={this.addFilter.bind(this, option,level)}>
 					<div className={className}>
 						<div className={block("text")}>{this.translate(option.key)}</div>
-						<div className={block("count")}>{option.doc_count}</div>
+						<div className={block("count")}>{countFormatter(option.doc_count)}</div>
 					</div>
 				</FastClick>
 					{(() => {

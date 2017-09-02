@@ -1,6 +1,6 @@
 import * as React from "react";
 import {mount} from "enzyme";
-import {HitsStats, HitsStatsDisplayProps} from "../src/HitsStats.tsx";
+import {HitsStats, HitsStatsDisplayProps} from "../src/HitsStats";
 import {SearchkitManager} from "../../../../core";
 
 describe("HitsStats tests", () => {
@@ -28,8 +28,8 @@ describe("HitsStats tests", () => {
     this.createWrapper({translations: {"hitstats.results_found":"{hitCount} movies found"}})
     expect(this.wrapper.find(".sk-hits-stats__info").text()).toEqual("10 movies found")
 
-    this.createWrapper()
-    expect(this.wrapper.find(".sk-hits-stats__info").text()).toEqual("10 results found in 10ms")
+    this.createWrapper({countFormatter:(count)=>"#"+count})
+    expect(this.wrapper.find(".sk-hits-stats__info").text()).toEqual("#10 results found in 10ms")
   })
 
   it('renders correctly - override component', () => {

@@ -7,11 +7,10 @@ import {
   FastClick, renderComponent, FieldOptions
 } from "../../../../core"
 
-import {
-   CheckboxItemList, Panel
-} from "../../../ui"
+import {CheckboxItemList, Panel} from "../../../ui"
 
-const defaults = require("lodash/defaults")
+import {defaults} from "lodash"
+import {identity} from "lodash"
 
 export class FacetFilter<T extends FacetFilterProps> extends SearchkitComponent<T, any> {
   accessor: FacetAccessor
@@ -24,7 +23,8 @@ export class FacetFilter<T extends FacetFilterProps> extends SearchkitComponent<
     size: 50,
     collapsable: false,
     showCount: true,
-    showMore: true
+    showMore: true,
+    bucketsTransform:identity
   }
 
   constructor(props){
@@ -37,7 +37,7 @@ export class FacetFilter<T extends FacetFilterProps> extends SearchkitComponent<
       size, translations, orderKey, orderDirection, fieldOptions
     } = this.props
     return {
-      id, operator, title, size, include, exclude,
+      id, operator, title, size, include, exclude, field,
       translations, orderKey, orderDirection, fieldOptions
     }
   }
@@ -85,11 +85,11 @@ export class FacetFilter<T extends FacetFilterProps> extends SearchkitComponent<
   }
 
   getItems(){
-    return this.accessor.getBuckets()
+    return this.props.bucketsTransform(this.accessor.getBuckets())
   }
 
   render() {
-    const { listComponent, containerComponent, showCount, title, id } = this.props
+    const { listComponent, containerComponent, showCount, title, id, countFormatter } = this.props
     return renderComponent(containerComponent, {
       title,
       className: id ? `filter--${id}` : undefined,
@@ -104,7 +104,8 @@ export class FacetFilter<T extends FacetFilterProps> extends SearchkitComponent<
         setItems: this.setFilters.bind(this),
         docCount: this.accessor.getDocCount(),
         showCount,
-        translate:this.translate
+        translate:this.translate,
+        countFormatter
       }),
       this.renderShowMore()
     ]);

@@ -1,4 +1,5 @@
-import * as React from "react";
+import * as React from "react"
+import * as PropTypes from "prop-types"
 
 import {
 	SearchkitComponent,
@@ -7,34 +8,35 @@ import {
 	SearchkitComponentProps
 } from "../../../../../core"
 
-const defaults = require("lodash/defaults")
-const omit = require("lodash/omit")
-const map = require("lodash/map")
+import { defaults, map, identity } from "lodash"
 
 export interface HierarchicalRefinementFilterProps extends SearchkitComponentProps {
 	field:string
 	id:string
 	title:string
+	size?:number
   orderKey?:string
   orderDirection?:string
   startLevel?:number
+	countFormatter?:(count:number)=> number | string
 }
 
 export class HierarchicalRefinementFilter extends SearchkitComponent<HierarchicalRefinementFilterProps, any> {
 	public accessor:NestedFacetAccessor
 
-	static propTypes = defaults({
-		field:React.PropTypes.string.isRequired,
-		id:React.PropTypes.string.isRequired,
-		title:React.PropTypes.string.isRequired,
-		orderKey:React.PropTypes.string,
-		orderDirection:React.PropTypes.oneOf(["asc", "desc"]),
-		startLevel:React.PropTypes.number
-	}, SearchkitComponent.propTypes)
-
-	constructor(props:HierarchicalRefinementFilterProps) {
-		super(props)
+	static defaultProps = {
+		countFormatter:identity
 	}
+
+	static propTypes = defaults({
+		field:PropTypes.string.isRequired,
+		id:PropTypes.string.isRequired,
+		title:PropTypes.string.isRequired,
+		orderKey:PropTypes.string,
+		orderDirection:PropTypes.oneOf(["asc", "desc"]),
+		startLevel:PropTypes.number,
+		countFormatter:PropTypes.func
+	}, SearchkitComponent.propTypes)
 
 	defineBEMBlocks() {
 		var blockClass = this.props.mod || "sk-hierarchical-refinement";
@@ -45,10 +47,24 @@ export class HierarchicalRefinementFilter extends SearchkitComponent<Hierarchica
 	}
 
 	defineAccessor() {
-		return new NestedFacetAccessor(
-			this.props.id,
-			omit(this.props, ["mod", "searchkit"]) as any
-		)
+		const {
+			field,
+			id,
+			title,
+			size,
+			orderKey,
+			orderDirection,
+			startLevel } = this.props;
+
+		return new NestedFacetAccessor(id, {
+			field,
+			id,
+			title,
+			size,
+			orderKey,
+			orderDirection,
+			startLevel
+		});
 	}
 
 	addFilter(level, option) {
@@ -60,7 +76,7 @@ export class HierarchicalRefinementFilter extends SearchkitComponent<Hierarchica
 
 		var block = this.bemBlocks.option
 		var isSelected = this.accessor.resultsState.contains(level, option.key)
-
+		const {countFormatter} = this.props
 		var className = block().state({
 			selected:isSelected
 		})
@@ -70,7 +86,7 @@ export class HierarchicalRefinementFilter extends SearchkitComponent<Hierarchica
 				<FastClick handler={this.addFilter.bind(this, level, option)}>
 					<div className={className}>
 						<div className={block("text")}>{this.translate(option.key)}</div>
-						<div className={block("count")}>{option.doc_count}</div>
+						<div className={block("count")}>{countFormatter(option.doc_count)}</div>
 					</div>
 				</FastClick>
 					{(() => {
@@ -95,7 +111,7 @@ export class HierarchicalRefinementFilter extends SearchkitComponent<Hierarchica
 
   render(){
 		let block = this.bemBlocks.container;
-		let disabled = this.accessor.getBuckets(0).length === 0		
+		let disabled = this.accessor.getBuckets(0).length === 0
 		let className =
 			block().mix(`filter--${this.props.id}`)
 				.state({disabled})

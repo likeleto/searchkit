@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as PropTypes from "prop-types";
 
 import {
 	SearchkitComponent,
@@ -6,13 +7,14 @@ import {
 	FastClick,
 	NoFiltersHitCountAccessor,
 	SuggestionsAccessor,
-	ReactComponentType
+	ReactComponentType,
+  renderComponent
 } from "../../../../core"
 
 import {NoHitsErrorDisplay, NoHitsErrorDisplayProps} from "./NoHitsErrorDisplay"
 import {NoHitsDisplay, NoHitsDisplayProps} from "./NoHitsDisplay"
 
-const defaults = require("lodash/defaults")
+import {defaults} from "lodash"
 
 export interface NoHitsProps extends SearchkitComponentProps {
 	suggestionsField?:string
@@ -23,19 +25,22 @@ export interface NoHitsProps extends SearchkitComponentProps {
 export class NoHits extends SearchkitComponent<NoHitsProps, any> {
 	noFiltersAccessor:NoFiltersHitCountAccessor
 	suggestionsAccessor:SuggestionsAccessor
+  bemBlocks: {
+    container: Function
+  }
 
 	static translations = {
 		"NoHits.NoResultsFound":"No results found for {query}.",
 		"NoHits.NoResultsFoundDidYouMean":"No results found for {query}. Did you mean {suggestion}?",
 		"NoHits.DidYouMean":"Search for {suggestion} instead",
 		"NoHits.SearchWithoutFilters":"Search for {query} without filters",
-		"NoHits.Error":"We're sorry, an issue occured when fetching your results. Please try again.",
+		"NoHits.Error":"We're sorry, an issue occurred when fetching your results. Please try again.",
 		"NoHits.ResetSearch":"Reset Search"
 	}
 	translations = NoHits.translations
 
 	static propTypes = defaults({
-		suggestionsField:React.PropTypes.string,
+		suggestionsField:PropTypes.string,
 		translations:SearchkitComponent.translationsPropType(
 			NoHits.translations
 		)
@@ -100,10 +105,10 @@ export class NoHits extends SearchkitComponent<NoHitsProps, any> {
 				tryAgainLabel: this.translate("NoHits.ResetSearch"),
 				error: this.getError()
 			}
-			return React.createElement(this.props.errorComponent, props)
+			return renderComponent(this.props.errorComponent, props)
 		}
 
-		const suggestion = this.getSuggestion()
+		const suggestion: any = this.getSuggestion()
 		const query = this.getQuery().getQueryString()
 		let infoKey = suggestion ? "NoHits.NoResultsFoundDidYouMean" : "NoHits.NoResultsFound"
 
@@ -118,7 +123,7 @@ export class NoHits extends SearchkitComponent<NoHitsProps, any> {
 			setSuggestionFn: this.setQueryString.bind(this, suggestion)
 		}
 
-		return React.createElement(this.props.component, props)
+		return renderComponent(this.props.component, props)
 
 	}
 }

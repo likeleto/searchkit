@@ -4,12 +4,12 @@ import { ItemComponent, CheckboxItemComponent } from "./ItemComponents"
 import { ListProps } from "./ListProps"
 import { PureRender } from "../../../core/react/pure-render"
 
-const block = require('bem-cn')
+let block = require("bem-cn")
 
-const map = require("lodash/map")
-const includes = require("lodash/includes")
-const defaults = require("lodash/defaults")
-const identity = require("lodash/identity")
+import {map} from "lodash"
+import {includes} from "lodash"
+import {defaults} from "lodash"
+import {identity} from "lodash"
 
 export interface ItemListProps extends ListProps {
   itemComponent?: any
@@ -24,6 +24,7 @@ export class AbstractItemList extends React.Component<ItemListProps, {}> {
     translate:identity,
     multiselect: true,
     selectItems: [],
+    countFormatter:identity
   }
 
   isActive(option){
@@ -39,7 +40,7 @@ export class AbstractItemList extends React.Component<ItemListProps, {}> {
   render() {
     const {
       mod, itemComponent, items, selectedItems = [], translate,
-      toggleItem, setItems, multiselect,
+      toggleItem, setItems, multiselect, countFormatter,
       disabled, showCount, className, docCount
     } = this.props
 
@@ -58,7 +59,8 @@ export class AbstractItemList extends React.Component<ItemListProps, {}> {
         bemBlocks: bemBlocks,
         key: option.key,
         itemKey:option.key,
-        count: option.doc_count,
+        count: countFormatter(option.doc_count),
+        rawCount:option.doc_count,
         listDocCount: docCount,
         disabled:option.disabled,
         showCount,

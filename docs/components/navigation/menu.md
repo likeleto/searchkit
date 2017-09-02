@@ -67,27 +67,10 @@ class App extends React.Component {
 - `fieldOptions` *({type:"embedded|nested|children", options:Object})* Configures the type field that is stored in ElasticSearch, can be `embedded`(default) `nested` or `children`
   - `type:nested` requires `options.path` provided
   - `type:children` requires `options.childType` provided
+  - see [Field Options](../../core/FieldOptions.md)
+- `countFormatter` *((count:number)=> number|string)* A optional function to format the doc counts
+- `bucketsTransform` *((buckets:Array)=> transformedBuckets)* A optional function to transform the buckets used for the aggregation, can be used to sort the list or to inject new facets.
 
-
-## Nested + Parent/Child
-Providing fieldOptions prop allows support for nesting and parent/child
-### Nested
-```jsx
-  <MenuFilter
-    id="embeddedTags"
-    title= "Embedded Tags"
-    field='tags.name'
-    fieldOptions={{type:'embedded', options:{path:'tags'}}}/>
-```
-
-### Child
-```jsx
-  <MenuFilter
-    id="childrenTags"
-    title= "Children Tags"
-    field='name'
-    fieldOptions={{type:'children', options:{childType:'tags'}}}/>
-```
 
 ## List Component examples
 

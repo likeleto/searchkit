@@ -6,10 +6,14 @@ import {
   FilterBucket,  FieldContextFactory, FieldContext,
   FieldOptions
 } from "../query";
-const assign = require("lodash/assign")
-const map = require("lodash/map")
-const omitBy = require("lodash/omitBy")
-const isUndefined = require("lodash/isUndefined")
+import {assign} from "lodash"
+import {map} from "lodash"
+import {omitBy} from "lodash"
+import {isUndefined} from "lodash"
+import {keyBy} from "lodash"
+import {reject} from "lodash"
+import {each} from "lodash"
+import {identity} from "lodash"
 
 
 export interface FacetAccessorOptions {
@@ -65,11 +69,32 @@ export class FacetAccessor extends FilterBasedAccessor<ArrayState> {
     this.fieldContext = FieldContextFactory(this.options.fieldOptions)
   }
 
-  getBuckets(){
+  getRawBuckets(){
     return this.getAggregations([
       this.uuid,
       this.fieldContext.getAggregationPath(),
       this.key, "buckets"], [])
+  }
+
+  getBuckets(){
+    let rawBuckets = this.getRawBuckets()
+    let keyIndex = keyBy(rawBuckets, "key")
+    let inIndex = (filter)=> !!keyIndex[filter]
+    let missingFilters = []
+    each(this.state.getValue(), (filterKey)=> {
+      if(keyIndex[filterKey]) {
+        const filter:any = keyIndex[filterKey]
+        filter.selected = true
+      } else {
+        missingFilters.push({
+          key:filterKey, missing:true, selected:true
+        })
+      }
+    })
+    let buckets = (missingFilters.length > 0) ?
+      missingFilters.concat(rawBuckets) : rawBuckets
+
+    return buckets
   }
 
   getDocCount(){

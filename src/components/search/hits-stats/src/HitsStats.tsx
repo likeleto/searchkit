@@ -1,19 +1,22 @@
 import * as React from "react";
+import * as PropTypes from "prop-types";
 
 import {
 	SearchkitComponent,
 	SearchkitComponentProps,
-	ReactComponentType
+	ReactComponentType,
+  renderComponent
 } from "../../../../core"
 
-const defaults = require("lodash/defaults")
-const get = require("lodash/get")
+import {defaults} from "lodash"
+import {get} from "lodash"
+import {identity} from "lodash"
 
 export interface HitsStatsDisplayProps {
-	bemBlocks:{container:Function}
+	bemBlocks:{container: Function}
 	resultsFoundLabel: string
-	timeTaken:string
-	hitsCount:string
+	timeTaken:string|number
+	hitsCount:string|number
 	translate:Function
 }
 
@@ -31,6 +34,7 @@ const HitsStatsDisplay = (props:HitsStatsDisplayProps) => {
 
 export interface HitsStatsProps extends SearchkitComponentProps {
 	component?: ReactComponentType<HitsStatsDisplayProps>
+	countFormatter?:(count:number)=> number | string
 }
 
 export class HitsStats extends SearchkitComponent<HitsStatsProps, any> {
@@ -43,11 +47,13 @@ export class HitsStats extends SearchkitComponent<HitsStatsProps, any> {
 	static propTypes = defaults({
 		translations:SearchkitComponent.translationsPropType(
 			HitsStats.translations
-		)
+		),
+		countFormatter:PropTypes.func
 	}, SearchkitComponent.propTypes)
 
 	static defaultProps = {
-		component: HitsStatsDisplay
+		component: HitsStatsDisplay,
+		countFormatter:identity
 	}
 
 	defineBEMBlocks() {
@@ -58,8 +64,9 @@ export class HitsStats extends SearchkitComponent<HitsStatsProps, any> {
 
 	render() {
 		const timeTaken = this.searchkit.getTime()
-		const hitsCount = this.searchkit.getHitsCount()
-		const props:HitsStatsDisplayProps = {
+		const {countFormatter} = this.props
+		const hitsCount = countFormatter(this.searchkit.getHitsCount())
+		const props: HitsStatsDisplayProps = {
 			bemBlocks:this.bemBlocks,
 			translate:this.translate,
 			timeTaken: timeTaken,
@@ -69,6 +76,6 @@ export class HitsStats extends SearchkitComponent<HitsStatsProps, any> {
 				hitCount:hitsCount
 			})
 		}
-		return React.createElement(this.props.component, props)
+		return renderComponent(this.props.component, props)
 	}
 }

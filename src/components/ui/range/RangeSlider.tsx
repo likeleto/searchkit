@@ -2,14 +2,18 @@ import * as React from "react";
 
 import { RangeProps } from './RangeProps'
 
-const Rcslider = require("rc-slider")
+import { identity } from "lodash"
+const Slider = require('rc-slider')
+const createSliderWithTooltip = Slider.createSliderWithTooltip
+const Range = createSliderWithTooltip(Slider.Range)
 
-const block = require('bem-cn')
-const { PureRender } = require("../../../core/react/pure-render")
+let block = require("bem-cn")
+import { PureRender } from "../../../core/react/pure-render"
 
 export interface RangeSliderProps extends RangeProps {
   step?: number
-  marks: Object
+  marks?: Object
+  rangeFormatter?:(n: number)=> number | string
 }
 
 @PureRender
@@ -17,6 +21,7 @@ export class RangeSlider extends React.Component<RangeSliderProps, {}> {
 
   static defaultProps = {
     mod: "sk-range-slider",
+    rangeFormatter:identity
   }
 
   constructor(props){
@@ -34,7 +39,7 @@ export class RangeSlider extends React.Component<RangeSliderProps, {}> {
   }
 
   render() {
-    const { mod, className, step, marks,
+    const { mod, className, step, marks,rangeFormatter,
       min, max, minValue, maxValue } = this.props
 
     const bemBlocks = {
@@ -43,15 +48,20 @@ export class RangeSlider extends React.Component<RangeSliderProps, {}> {
 
     return (
       <div className={bemBlocks.container().mix(className)}>
-        <Rcslider
+        <Range
           min={min}
           max={max}
-          marks={marks || { [min]: min, [max]: max }}
+          marks={marks || {
+            [min]: rangeFormatter(min),
+            [max]: rangeFormatter(max)
+          }}
+          tipFormatter={rangeFormatter}
           range={true}
           step={step}
           value={[minValue, maxValue]}
           onChange={this.onChange}
-          onAfterChange={this.onFinished}/>
+          onAfterChange={this.onFinished}
+          />
       </div>
     )
   }

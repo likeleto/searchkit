@@ -1,6 +1,6 @@
 import * as React from "react";
 import {mount} from "enzyme";
-import {RangeFilter} from "../src/RangeFilter.tsx";
+import {RangeFilter} from "../src/RangeFilter";
 import {SearchkitManager} from "../../../../../core";
 import {
   fastClick, hasClass, jsxToHTML, printPrettyHtml
@@ -25,6 +25,7 @@ describe("Range Filter tests", () => {
           max={100}
           title="metascore"
           interval={interval}
+          rangeFormatter={(count)=> count + " score"}
           showHistogram={withHistogram}/>
       );
 
@@ -67,36 +68,43 @@ describe("Range Filter tests", () => {
       field:"metascore",
       title:"metascore",
       interval: undefined,
-      loadHistogram:true
+      loadHistogram:true,
+      fieldOptions:{
+        type:'embedded',
+        field:'metascore'
+      }
     })
   })
 
   it('renders correctly', () => {
     this.createWrapper(true)
+
     expect(this.wrapper.html()).toEqual(jsxToHTML(
       <div className="sk-panel filter--m">
         <div className="sk-panel__header">metascore</div>
         <div className="sk-panel__content">
           <div>
             <div className="sk-range-histogram">
-              <div className="sk-range-histogram__bar" style={{height:"20%"}}></div>
-              <div className="sk-range-histogram__bar" style={{height:"60%"}}></div>
-              <div className="sk-range-histogram__bar" style={{height:"20%"}}></div>
-              <div className="sk-range-histogram__bar" style={{height:"20%"}}></div>
-              <div className="sk-range-histogram__bar" style={{height:"20%"}}></div>
-              <div className="sk-range-histogram__bar" style={{height:"100%"}}></div>
-              <div className="sk-range-histogram__bar" style={{height:"20%"}}></div>
-              <div className="sk-range-histogram__bar" style={{height:"20%"}}></div>
-              <div className="sk-range-histogram__bar" style={{height:"20%"}}></div>
-              <div className="sk-range-histogram__bar" style={{height:"20%"}}></div>
+              <div className="sk-range-histogram__bar" style={{height:" 20%"}}></div>
+              <div className="sk-range-histogram__bar" style={{height:" 60%"}}></div>
+              <div className="sk-range-histogram__bar" style={{height:" 20%"}}></div>
+              <div className="sk-range-histogram__bar" style={{height:" 20%"}}></div>
+              <div className="sk-range-histogram__bar" style={{height:" 20%"}}></div>
+              <div className="sk-range-histogram__bar" style={{height:" 100%"}}></div>
+              <div className="sk-range-histogram__bar" style={{height:" 20%"}}></div>
+              <div className="sk-range-histogram__bar" style={{height:" 20%"}}></div>
+              <div className="sk-range-histogram__bar" style={{height:" 20%"}}></div>
+              <div className="sk-range-histogram__bar" style={{height:" 20%"}}></div>
             </div>
             <div className="sk-range-slider">
-              <div className="rc-slider">
-                <div className="rc-slider-handle" style={{left:"100%"}}></div>
-                <div className="rc-slider-handle" style={{left:"0%"}}></div>
-                <div className="rc-slider-track" style={{left:"0%",width:"100%",visibility:"visible"}}></div>
-                <div className="rc-slider-step"><span className="rc-slider-dot rc-slider-dot-active" style={{left:"0%"}}></span><span className="rc-slider-dot rc-slider-dot-active" style={{left:"100%"}}></span></div>
-                <div className="rc-slider-mark"><span className="rc-slider-mark-text rc-slider-mark-text-active" style={{width:"90%",left:"-45%"}}>0</span><span className="rc-slider-mark-text rc-slider-mark-text-active" style={{width:"90%",left:"55%"}}>100</span></div>
+              <div className="rc-slider rc-slider-with-marks">
+                <div className="rc-slider-rail"></div>
+                <div className="rc-slider-track rc-slider-track-1" style={{visibility:" visible", " left":" 0%", " width":" 100%"}}></div>
+                <div className="rc-slider-step"><span className="rc-slider-dot rc-slider-dot-active" style={{left:" 0%"}}></span><span className="rc-slider-dot rc-slider-dot-active" style={{left:" 100%"}}></span></div>
+                <div role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-disabled="false"
+                  className="rc-slider-handle rc-slider-handle-1" style={{left:" 0%"}}></div>
+                <div role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" aria-disabled="false" className="rc-slider-handle rc-slider-handle-2" style={{left:" 100%"}}></div>
+                <div className="rc-slider-mark"><span className="rc-slider-mark-text rc-slider-mark-text-active" style={{width:" 90%", " margin-left":" -45%", " left":" 0%"}}>0 score</span><span className="rc-slider-mark-text rc-slider-mark-text-active" style={{width:" 90%", " margin-left":" -45%", " left":" 100%"}}>100 score</span></div>
               </div>
             </div>
           </div>
@@ -145,16 +153,16 @@ describe("Range Filter tests", () => {
     this.wrapper.node.sliderUpdate({min:30,max:70})
     expect(this.wrapper.find(".sk-range-histogram").html()).toEqual(jsxToHTML(
       <div className="sk-range-histogram">
-        <div className="sk-range-histogram__bar is-out-of-bounds" style={{height:"20%"}}></div>
-        <div className="sk-range-histogram__bar is-out-of-bounds" style={{height:"60%"}}></div>
-        <div className="sk-range-histogram__bar" style={{height:"20%"}}></div>
-        <div className="sk-range-histogram__bar" style={{height:"20%"}}></div>
-        <div className="sk-range-histogram__bar" style={{height:"20%"}}></div>
-        <div className="sk-range-histogram__bar" style={{height:"100%"}}></div>
-        <div className="sk-range-histogram__bar" style={{height:"20%"}}></div>
-        <div className="sk-range-histogram__bar is-out-of-bounds" style={{height:"20%"}}></div>
-        <div className="sk-range-histogram__bar is-out-of-bounds" style={{height:"20%"}}></div>
-        <div className="sk-range-histogram__bar is-out-of-bounds" style={{height:"20%"}}></div>
+        <div className="sk-range-histogram__bar is-out-of-bounds" style={{height:" 20%"}}></div>
+        <div className="sk-range-histogram__bar is-out-of-bounds" style={{height:" 60%"}}></div>
+        <div className="sk-range-histogram__bar" style={{height:" 20%"}}></div>
+        <div className="sk-range-histogram__bar" style={{height:" 20%"}}></div>
+        <div className="sk-range-histogram__bar" style={{height:" 20%"}}></div>
+        <div className="sk-range-histogram__bar" style={{height:" 100%"}}></div>
+        <div className="sk-range-histogram__bar" style={{height:" 20%"}}></div>
+        <div className="sk-range-histogram__bar is-out-of-bounds" style={{height:" 20%"}}></div>
+        <div className="sk-range-histogram__bar is-out-of-bounds" style={{height:" 20%"}}></div>
+        <div className="sk-range-histogram__bar is-out-of-bounds" style={{height:" 20%"}}></div>
       </div>
     ))
   })

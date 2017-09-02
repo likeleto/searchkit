@@ -3,16 +3,17 @@ import {FilterBasedAccessor} from "./FilterBasedAccessor"
 import {Utils} from "../support"
 import {
   RangeQuery, BoolShould, CardinalityMetric,
-  RangeBucket, FilterBucket, SelectedFilter
+  RangeBucket, FilterBucket, SelectedFilter,
+  FieldOptions, FieldContext, FieldContextFactory
 } from "../";
 
-const find = require("lodash/find")
-const compact = require("lodash/compact")
-const map = require("lodash/map")
-const filter = require("lodash/filter")
-const omitBy = require("lodash/omitBy")
-const isUndefined = require("lodash/isUndefined")
-const includes = require("lodash/includes")
+import {find} from "lodash"
+import {compact} from "lodash"
+import {map} from "lodash"
+import {filter} from "lodash"
+import {omitBy} from "lodash"
+import {isUndefined} from "lodash"
+import {includes} from "lodash"
 
 export interface RangeOption {
   title:string, from?:number, to?:number, key?:string
@@ -23,18 +24,25 @@ export interface NumericOptions {
   options:Array<RangeOption>
   multiselect?: boolean
   id:string
+  fieldOptions?:FieldOptions
 }
 
 export class NumericOptionsAccessor extends FilterBasedAccessor<ArrayState> {
 
   state = new ArrayState()
   options:NumericOptions
+  fieldContext:FieldContext
+
   constructor(key, options:NumericOptions){
     super(key)
     this.options = options
     this.options.options = Utils.computeOptionKeys(
       options.options, ["from", "to"], "all"
     )
+    this.options.fieldOptions = this.options.fieldOptions || {type:"embedded"}
+    this.options.fieldOptions.field = this.options.field
+    this.fieldContext = FieldContextFactory(this.options.fieldOptions)
+
   }
 
   getDefaultOption(){
@@ -66,7 +74,7 @@ export class NumericOptionsAccessor extends FilterBasedAccessor<ArrayState> {
       this.toggleOption(titles[0])
     } else {
 
-      let keys = map(
+      let keys:any = map(
         filter(this.options.options, opt=> includes(titles, opt.title)),
         "key"
       )
@@ -95,9 +103,12 @@ export class NumericOptionsAccessor extends FilterBasedAccessor<ArrayState> {
       [this.uuid, this.key,"buckets"], []
     ), this.emptyOptionsFilter)
   }
-  
+
   getDocCount(){
-    return this.getAggregations([this.uuid, "doc_count"], 0)
+    return this.getAggregations([
+      this.uuid,
+      this.fieldContext.getAggregationPath(),
+      "doc_count"], 0)
   }
 
   emptyOptionsFilter(option) {
@@ -106,9 +117,11 @@ export class NumericOptionsAccessor extends FilterBasedAccessor<ArrayState> {
 
   buildSharedQuery(query) {
     var filters = this.getSelectedOptions()
-    var filterRanges = map(filters, filter => RangeQuery(this.options.field, {
-      gte: filter.from, lt: filter.to
-    }))
+    var filterRanges = map(filters, filter => {
+      return this.fieldContext.wrapFilter(RangeQuery(this.options.field, {
+        gte: filter.from, lt: filter.to
+      }))
+    })
     var selectedFilters: Array<SelectedFilter> = map(filters, (filter) => {
       return {
         name: this.translate(this.options.title),
@@ -140,12 +153,13 @@ export class NumericOptionsAccessor extends FilterBasedAccessor<ArrayState> {
     return query.setAggs(FilterBucket(
       this.uuid,
       query.getFiltersWithoutKeys(this.uuid),
-      RangeBucket(
-        this.key,
-        this.options.field,
-        this.getRanges()
-      ),
-      CardinalityMetric(this.key+"_count", this.key)
+      ...this.fieldContext.wrapAggregations(
+        RangeBucket(
+          this.key,
+          this.options.field,
+          this.getRanges()
+        )
+      )
     ))
   }
 

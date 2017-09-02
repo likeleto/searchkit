@@ -13,7 +13,7 @@ import {
 
 import * as sinon from "sinon";
 
-const omit = require("lodash/omit")
+import {omit} from "lodash"
 
 describe("InputFilter tests", () => {
 
@@ -124,7 +124,6 @@ describe("InputFilter tests", () => {
   })
 
   it("search on change with clock", ()=> {
-    jasmine.clock().install()
     let queries = []
     this.searchkit.performSearch = ()=> {
       queries.push(this.searchkit.buildQuery())
@@ -132,16 +131,14 @@ describe("InputFilter tests", () => {
     this.createWrapper(true)
     expect(this.wrapper.node.props.searchThrottleTime).toBe(200)
     this.typeSearch("m")
-    jasmine.clock().tick(100)
+    this.wrapper.node.throttledSearch.flush()
     expect(queries.length).toBe(1)
     expect(queries[0].getSelectedFilters()[0].value).toBe("m")
     this.typeSearch("ma")
-    jasmine.clock().tick(100)
     expect(queries.length).toBe(1)
-    jasmine.clock().tick(300)
+    this.wrapper.node.throttledSearch.flush()
     expect(queries.length).toBe(2)
     expect(queries[1].getSelectedFilters()[0].value).toBe("ma")
-    jasmine.clock().uninstall()
   })
 
   it("search on submit", () => {

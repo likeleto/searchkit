@@ -1,10 +1,12 @@
 import * as React from "react";
+import * as PropTypes from "prop-types";
 
 import {
 	SearchkitComponent,
 	PageSizeAccessor,
 	ImmutableQuery,
 	HighlightAccessor,
+	CustomHighlightAccessor,
 	SearchkitComponentProps,
 	ReactComponentType,
 	PureRender,
@@ -17,8 +19,8 @@ import {
 	block
 } from "../../../../core"
 
-const map = require("lodash/map")
-const defaults = require("lodash/defaults")
+import {map} from "lodash"
+import {defaults} from "lodash"
 
 
 
@@ -57,10 +59,10 @@ export class HitsList extends React.Component<HitsListProps, any>{
 	}
 
 	static propTypes = {
-		mod:React.PropTypes.string,
-		className:React.PropTypes.string,
+		mod:PropTypes.string,
+		className:PropTypes.string,
 		itemComponent:RenderComponentPropType,
-		hits:React.PropTypes.array
+		hits:PropTypes.any
 	}
 
 	render(){
@@ -71,7 +73,7 @@ export class HitsList extends React.Component<HitsListProps, any>{
 		}
 		return (
 			<div data-qa="hits" className={bemBlocks.container().mix(className)}>
-				{map(hits, (result, index)=> {
+				{map(hits, (result: any, index)=> {
 					return renderComponent(itemComponent, {
 						key:result._id, result, bemBlocks, index
 					})
@@ -84,6 +86,7 @@ export class HitsList extends React.Component<HitsListProps, any>{
 export interface HitsProps extends SearchkitComponentProps{
 	hitsPerPage: number
 	highlightFields?:Array<string>
+	customHighlight?:any
 	sourceFilter?:SourceFilterType
 	itemComponent?:ReactComponentType<HitItemProps>
 	listComponent?:ReactComponentType<HitsListProps>
@@ -95,14 +98,14 @@ export class Hits extends SearchkitComponent<HitsProps, any> {
 	hitsAccessor:HitsAccessor
 
 	static propTypes = defaults({
-		hitsPerPage:React.PropTypes.number.isRequired,
-		highlightFields:React.PropTypes.arrayOf(
-			React.PropTypes.string
+		hitsPerPage:PropTypes.number.isRequired,
+		highlightFields:PropTypes.arrayOf(
+			PropTypes.string
 		),
-		sourceFilterType:React.PropTypes.oneOf([
-			React.PropTypes.string,
-			React.PropTypes.arrayOf(React.PropTypes.string),
-			React.PropTypes.bool
+		sourceFilterType:PropTypes.oneOf([
+			PropTypes.string,
+			PropTypes.arrayOf(PropTypes.string),
+			PropTypes.bool
 		]),
 		itemComponent:RenderComponentPropType,
 		listComponent:RenderComponentPropType
@@ -118,6 +121,9 @@ export class Hits extends SearchkitComponent<HitsProps, any> {
 		if(this.props.highlightFields) {
 			this.searchkit.addAccessor(
 				new HighlightAccessor(this.props.highlightFields))
+		}
+		if (this.props.customHighlight) {
+			this.searchkit.addAccessor(new CustomHighlightAccessor(this.props.customHighlight))
 		}
 		if(this.props.sourceFilter){
 			this.searchkit.addAccessor(

@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as PropTypes from "prop-types";
 
 import {
 	SearchkitManager,
@@ -9,9 +10,10 @@ import {
 	ReactComponentType,
 	PureRender,
 	ResetSearchOptions,
-	ResetSearchAccessor
+	ResetSearchAccessor,
+  renderComponent
 } from "../../../../../core"
-const defaults = require("lodash/defaults")
+import {defaults} from "lodash"
 
 
 export interface ResetFiltersDisplayProps {
@@ -55,8 +57,8 @@ export class ResetFilters extends SearchkitComponent<ResetFiltersProps, any> {
 		translations:SearchkitComponent.translationsPropType(
 			ResetFilters.translations
 		),
-		component:React.PropTypes.func,
-		options:React.PropTypes.object
+		component:PropTypes.func,
+		options:PropTypes.object
 	}, SearchkitComponent.propTypes)
 
 	static defaultProps = {
@@ -91,6 +93,6 @@ export class ResetFilters extends SearchkitComponent<ResetFiltersProps, any> {
 			translate:this.translate,
 			clearAllLabel: this.translate("reset.clear_all")
 		}
-		return React.createElement(this.props.component, props)
+		return renderComponent(this.props.component, props)
   }
 }

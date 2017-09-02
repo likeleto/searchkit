@@ -1,6 +1,6 @@
 import {FieldContext} from './FieldContext';
 import {NestedBucket, NestedQuery} from "../query_dsl"
-const get = require("lodash/get")
+import {get} from "lodash"
 
 export class NestedFieldContext extends FieldContext {
 
@@ -23,6 +23,10 @@ export class NestedFieldContext extends FieldContext {
     )]
   }
   wrapFilter(filter){
-    return NestedQuery(this.fieldOptions.options.path, filter)
+    return NestedQuery(
+      this.fieldOptions.options.path,
+      filter,
+      this.fieldOptions.options
+    )
   }
 }

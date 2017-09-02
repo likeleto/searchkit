@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as PropTypes from "prop-types";
 
 import {
   SearchkitComponent,
@@ -12,8 +13,8 @@ import {
   Panel, CheckboxItemList
 } from "../../../ui"
 
-const defaults = require('lodash/defaults')
-const map = require('lodash/map')
+import {defaults} from 'lodash'
+import {map} from 'lodash'
 
 export interface CheckboxFilterProps extends SearchkitComponentProps {
   id: string
@@ -29,14 +30,14 @@ export class CheckboxFilter extends SearchkitComponent<CheckboxFilterProps, any>
   accessor: CheckboxFilterAccessor
 
   static propTypes = defaults({
-    id: React.PropTypes.string.isRequired,
-    title: React.PropTypes.string.isRequired,
-    label: React.PropTypes.string.isRequired,
-    filter: React.PropTypes.object.isRequired,
+    id: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    label: PropTypes.string.isRequired,
+    filter: PropTypes.object.isRequired,
     translations: SearchkitComponent.translationsPropType(
         CheckboxFilterAccessor.translations
     ),
-    showCount: React.PropTypes.bool,
+    showCount: PropTypes.bool,
   }, SearchkitComponent.propTypes)
 
   static defaultProps = {

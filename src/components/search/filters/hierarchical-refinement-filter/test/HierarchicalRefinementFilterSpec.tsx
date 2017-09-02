@@ -1,20 +1,20 @@
 import * as React from "react";
 import {mount} from "enzyme";
 import {fastClick, hasClass, jsxToHTML, printPrettyHtml} from "../../../../__test__/TestHelpers"
-import {HierarchicalRefinementFilter} from "../src/HierarchicalRefinementFilter.tsx";
-import {SearchkitManager} from "../../../../../core";
-const bem = require("bem-cn");
-const _ = require("lodash")
-import * as sinon from "sinon";
+import {HierarchicalRefinementFilter} from "../src/HierarchicalRefinementFilter"
+import {SearchkitManager} from "../../../../../core"
+let bem = require("bem-cn")
+import * as _ from "lodash"
+import * as sinon from "sinon"
 
 describe("Refinement List Filter tests", () => {
 
   beforeEach(() => {
-
     this.searchkit = SearchkitManager.mock()
     spyOn(this.searchkit, "performSearch")
     this.wrapper = mount(
       <HierarchicalRefinementFilter
+        countFormatter={(count)=> "#"+count}
         field="test" id="testid" title="test title"
         searchkit={this.searchkit} />
     );
@@ -56,7 +56,6 @@ describe("Refinement List Filter tests", () => {
         return container;
       }
     }
-
   });
 
   it("should configure accessor correctly", ()=> {
@@ -65,7 +64,11 @@ describe("Refinement List Filter tests", () => {
     expect(options).toEqual({
       "id": "testid",
       "title": "test title",
-      "field":"test"
+      "field":"test",
+      "size": undefined,
+      "orderKey":undefined,
+      "orderDirection":undefined,
+      "startLevel":undefined
     })
 
   })
@@ -79,13 +82,13 @@ describe("Refinement List Filter tests", () => {
             <div>
               <div className="sk-hierarchical-refinement-option">
                 <div className="sk-hierarchical-refinement-option__text">option1</div>
-                <div className="sk-hierarchical-refinement-option__count">1</div>
+                <div className="sk-hierarchical-refinement-option__count">#1</div>
               </div>
             </div>
             <div>
               <div className="sk-hierarchical-refinement-option">
                 <div className="sk-hierarchical-refinement-option__text">option2</div>
-                <div className="sk-hierarchical-refinement-option__count">2</div>
+                <div className="sk-hierarchical-refinement-option__count">#2</div>
               </div>
             </div>
           </div>
@@ -107,25 +110,25 @@ describe("Refinement List Filter tests", () => {
             <div>
               <div className="sk-hierarchical-refinement-option">
                 <div className="sk-hierarchical-refinement-option__text">option1</div>
-                <div className="sk-hierarchical-refinement-option__count">1</div>
+                <div className="sk-hierarchical-refinement-option__count">#1</div>
               </div>
             </div>
             <div>
               <div className="sk-hierarchical-refinement-option is-selected">
                 <div className="sk-hierarchical-refinement-option__text">option2</div>
-                <div className="sk-hierarchical-refinement-option__count">2</div>
+                <div className="sk-hierarchical-refinement-option__count">#2</div>
               </div>
               <div className="sk-hierarchical-refinement-list__hierarchical-options">
                 <div>
                   <div className="sk-hierarchical-refinement-option">
                     <div className="sk-hierarchical-refinement-option__text">option2child1</div>
-                    <div className="sk-hierarchical-refinement-option__count">1</div>
+                    <div className="sk-hierarchical-refinement-option__count">#1</div>
                   </div>
                 </div>
                 <div>
                   <div className="sk-hierarchical-refinement-option is-selected">
                     <div className="sk-hierarchical-refinement-option__text">option2child2</div>
-                    <div className="sk-hierarchical-refinement-option__count">1</div>
+                    <div className="sk-hierarchical-refinement-option__count">#1</div>
                   </div>
                   <div className="sk-hierarchical-refinement-list__hierarchical-options"></div>
                 </div>

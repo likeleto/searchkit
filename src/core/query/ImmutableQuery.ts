@@ -2,12 +2,12 @@ const update = require("react-addons-update")
 import {BoolMust} from "./query_dsl"
 import {Utils} from "../support/Utils"
 import {SelectedFilter} from "./SelectedFilter"
-const omitBy = require("lodash/omitBy")
-const omit = require("lodash/omit")
-const values = require("lodash/values")
-const pick = require("lodash/pick")
-const merge = require("lodash/merge")
-const isUndefined = require("lodash/isUndefined")
+import {omitBy} from "lodash"
+import {omit} from "lodash"
+import {values} from "lodash"
+import {pick} from "lodash"
+import {merge} from "lodash"
+import {isUndefined} from "lodash"
 
 export type SourceFilterType = string|Array<string>|boolean
 
@@ -34,7 +34,7 @@ export class ImmutableQuery {
       query.query = BoolMust(this.index.queries)
     }
     if(this.index.filters.length > 0) {
-      query.filter = BoolMust(this.index.filters)
+      query.post_filter = BoolMust(this.index.filters)
     }
     query.aggs = this.index.aggs
     query.size = this.index.size
@@ -148,7 +148,7 @@ export class ImmutableQuery {
   getFrom(){
     return this.query.from
   }
-  
+
   getPage(){
     return 1 + Math.floor((this.getFrom()||0) / (this.getSize()||10))
   }

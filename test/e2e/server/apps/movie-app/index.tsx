@@ -4,9 +4,10 @@ const {
   HierarchicalMenuFilter, HitsStats, SortingSelector, NoHits,
   SelectedFilters, ResetFilters, RangeFilter, NumericRefinementListFilter,
   ViewSwitcherHits, ViewSwitcherToggle, DynamicRangeFilter,
-  InputFilter, GroupedSelectedFilters
+  InputFilter, GroupedSelectedFilters, FastClick, FastClickComponent
 } = require("../../../../../src")
 
+FastClick.component = FastClickComponent
 const {
   Layout, TopBar, LayoutBody, LayoutResults,
   ActionBar, ActionBarRow, SideBar
@@ -17,7 +18,7 @@ import * as ReactDOM from "react-dom";
 import * as React from "react";
 const searchkit = new SearchkitManager(host)
 
-const _ = require("lodash")
+import * as _ from "lodash"
 
 require("./styles.scss")
 
@@ -68,7 +69,7 @@ class App extends React.Component<any, any> {
 
           <SideBar>
             <HierarchicalMenuFilter fields={["type.raw", "genres.raw"]} title="Categories" id="categories"/>
-            <DynamicRangeFilter field="metaScore" id="metascore" title="Metascore"/>
+            <DynamicRangeFilter field="metaScore" id="metascore" title="Metascore" rangeFormatter={(count)=> count + "*"}/>
             <RangeFilter min={0} max={10} field="imdbRating" id="imdbRating" title="IMDB Rating" showHistogram={true}/>
             <InputFilter id="writers" searchThrottleTime={500} title="Writers" placeholder="Search writers" searchOnChange={true} queryFields={["writers"]} />
             <RefinementListFilter id="actors" title="Actors" field="actors.raw" size={10}/>

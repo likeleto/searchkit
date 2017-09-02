@@ -20,9 +20,9 @@ import * as ReactDOM from "react-dom";
 import * as React from "react";
 const searchkit = new SearchkitManager(host)
 
-const _ = require("lodash")
-const map = require("lodash/map")
-const isUndefined = require("lodash/isUndefined")
+import * as _ from "lodash"
+import {map} from "lodash"
+import {isUndefined} from "lodash"
 
 import { TogglePanel } from './TogglePanel'
 
@@ -122,7 +122,7 @@ export class HitsTable extends React.Component<any, {}>{
             <tr>{map(columns, this.renderHeader)}</tr>
           </thead>
           <tbody>
-            {map(hits, hit => (
+            {map(hits, (hit: any) => (
               <tr key={hit._id}>
                 {map(columns, (col, idx) => this.renderCell(hit, col, idx))}
               </tr>
@@ -150,7 +150,7 @@ class MovieHitsTable extends React.Component<any, {}> {
             </tr>
           </thead>
           <tbody>
-            {map(hits, hit => (
+            {map(hits, (hit:any) => (
               <tr key={hit._id}>
                 <td style={{margin: 0, padding: 0, width: 40}}>
                   <img data-qa="poster" src={hit._source.poster} style={{width: 40}}/>
@@ -240,7 +240,7 @@ class App extends React.Component<any, any> {
               <RefinementListFilter id="actors" title="Actors" field="actors.raw" size={10}/>
               <RefinementListFilter translations={{"facets.view_more":"View more writers"}} id="writers" title="Writers" field="writers.raw" operator="OR" size={10}/>
               <RefinementListFilter id="countries" title="Countries" field="countries.raw" operator="OR" size={10}/>
-              <NumericRefinementListFilter listComponent={Select} id="runtimeMinutes" title="Length" field="runtimeMinutes" options={[
+              <NumericRefinementListFilter countFormatter={(count)=>"#"+count} listComponent={Select} id="runtimeMinutes" title="Length" field="runtimeMinutes" options={[
                 {title:"All"},
                 {title:"up to 20", from:0, to:20},
                 {title:"21 to 60", from:21, to:60},

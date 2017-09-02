@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as PropTypes from "prop-types";
 
 import {
   QueryAccessor,
@@ -6,10 +7,10 @@ import {
   SearchkitComponentProps
 } from "../../../core"
 
-const defaults = require("lodash/defaults")
-const throttle = require("lodash/throttle")
-const assign = require("lodash/assign")
-const isUndefined = require("lodash/isUndefined")
+import {defaults} from "lodash"
+import {throttle} from "lodash"
+import {assign} from "lodash"
+import {isUndefined} from "lodash"
 
 export interface SearchBoxProps extends SearchkitComponentProps {
   searchOnChange?:boolean
@@ -44,21 +45,21 @@ export class SearchBox extends SearchkitComponent<SearchBoxProps, any> {
   }
 
   static propTypes = defaults({
-    id:React.PropTypes.string,
-    searchOnChange:React.PropTypes.bool,
-    searchThrottleTime:React.PropTypes.number,
-    queryBuilder:React.PropTypes.func,
-    queryFields:React.PropTypes.arrayOf(React.PropTypes.string),
-    autofocus:React.PropTypes.bool,
-    queryOptions:React.PropTypes.object,
-    prefixQueryFields:React.PropTypes.arrayOf(React.PropTypes.string),
-    prefixQueryOptions:React.PropTypes.object,
+    id:PropTypes.string,
+    searchOnChange:PropTypes.bool,
+    searchThrottleTime:PropTypes.number,
+    queryBuilder:PropTypes.func,
+    queryFields:PropTypes.arrayOf(PropTypes.string),
+    autofocus:PropTypes.bool,
+    queryOptions:PropTypes.object,
+    prefixQueryFields:PropTypes.arrayOf(PropTypes.string),
+    prefixQueryOptions:PropTypes.object,
     translations:SearchkitComponent.translationsPropType(
       SearchBox.translations
     ),
-    mod: React.PropTypes.string,
-    placeholder: React.PropTypes.string,
-    blurAction: React.PropTypes.string
+    mod: PropTypes.string,
+    placeholder: PropTypes.string,
+    blurAction: PropTypes.string
   }, SearchkitComponent.propTypes)
 
   constructor (props:SearchBoxProps) {
@@ -119,7 +120,7 @@ export class SearchBox extends SearchkitComponent<SearchBoxProps, any> {
       return input
     }
   }
-  
+
   getAccessorValue(){
     return (this.accessor.state.getValue() || "") + ""
   }
@@ -139,11 +140,11 @@ export class SearchBox extends SearchkitComponent<SearchBoxProps, any> {
     if (!focused){
       const { input } = this.state
       if (this.props.blurAction == "search"
-        && !isUndefined(input) 
+        && !isUndefined(input)
         && input != this.getAccessorValue()){
         this.searchQuery(input)
       }
-      this.setState({ 
+      this.setState({
         focused,
         input: undefined // Flush (should use accessor's state now)
       })
