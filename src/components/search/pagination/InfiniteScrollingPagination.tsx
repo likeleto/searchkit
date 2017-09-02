@@ -49,7 +49,7 @@ export class InfiniteScrollingPagination extends SearchkitComponent<InfiniteScro
 
   getTotalPages():number {
     return Math.ceil(
-      get(this.getResults(), ".hits.total", 1)
+      get(this.getResults(), "hits.total", 1)
       /
       get(this.getQuery(), "query.size", 10)
     );
