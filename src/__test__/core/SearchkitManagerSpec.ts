@@ -289,7 +289,7 @@ describe("SearchkitManager", ()=> {
       return query
     })
     let initialSearchRequest  =
-      this.searchkit.currentSearchRequest = new SearchRequest(this.host, null, this.searchkit)
+      this.searchkit.currentSearchRequest = new SearchRequest(this.host, null, this.searchkit, {})
     this.searchkit.addAccessor(
       this.accessor)
 

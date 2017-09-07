@@ -6,7 +6,9 @@ export class SearchRequest {
 
   active:boolean
   constructor(public transport:ESTransport,
-    public query:Object, public searchkit:SearchkitManager){
+    public query:Object, 
+    public searchkit:SearchkitManager,
+    public srcQuery?:Object){
     this.active = true
   }
 
@@ -24,13 +26,13 @@ export class SearchRequest {
 
   setResults(results){
     if(this.active){
-      this.searchkit.setResults(results)
+      this.searchkit.setResults(results, this.srcQuery)
     }
   }
 
   setError(error){
     if(this.active){
-      this.searchkit.setError(error)
+      this.searchkit.setError(error, this.srcQuery)
     }
   }
 

@@ -17,7 +17,8 @@ import qs from "qs"
 
 require('es6-promise').polyfill()
 
-import {after} from "lodash"
+const after = require("lodash/after")
+const assign = require("lodash/assign")
 
 export interface SearchkitOptions {
   useHistory?:boolean,
@@ -204,20 +205,39 @@ export class SearchkitManager {
     this.query = query
     this.loading = true
     this.emitter.trigger()
-    let queryObject = this.queryProcessor(this.query.getJSON())
+    let queryJson = this.query.getJSON()
+    let queryObject = this.queryProcessor(queryJson)
     this.currentSearchRequest && this.currentSearchRequest.deactivate()
     this.currentSearchRequest = new SearchRequest(
-      this.transport, queryObject, this)
+      this.transport, queryObject, this, query)
     this.currentSearchRequest.run()
   }
 
-  setResults(results){
-    this.compareResults(this.results, results)
-    this.results = results
-    this.error = null
-    this.accessors.setResults(results)
-    this.onResponseChange()
-    this.resultsEmitter.trigger(this.results)
+  setResults(results, srcQuery?){
+    if (srcQuery && srcQuery.shouldAppendResults()){
+      results.hits = assign({}, results.hits, {
+        hits: [
+          ...this.results.hits.hits,
+          ...results.hits.hits,
+        ],
+        hasChanged: false
+      })
+      let mergedResults = assign({}, this.results, {
+        hits: results.hits
+      })
+      this.results = mergedResults
+      this.error = null
+      this.accessors.setResults(mergedResults)
+      this.onResponseChange()
+      this.resultsEmitter.trigger(this.results)
+    } else {
+      this.compareResults(this.results, results)
+      this.results = results
+      this.error = null
+      this.accessors.setResults(results)
+      this.onResponseChange()
+      this.resultsEmitter.trigger(this.results)
+    }
   }
 
   compareResults(previousResults, results){
@@ -266,7 +286,7 @@ export class SearchkitManager {
     return get(this.results, ["hits", "hasChanged"], true)
   }
 
-  setError(error){
+  setError(error, context){
     this.error = error
     console.error(this.error)
     this.results = null
